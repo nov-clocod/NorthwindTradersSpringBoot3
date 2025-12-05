@@ -1,0 +1,150 @@
+package com.pluralsight.NorthwindTraders3;
+
+import com.pluralsight.NorthwindTraders3.models.Product;
+import com.pluralsight.NorthwindTraders3.services.ProductService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Scanner;
+
+@Component
+public class NorthwindTradersApplicationCommandLine implements CommandLineRunner {
+
+    @Autowired
+    private ProductService productService;
+
+    @Override
+    public void run(String... args) {
+        Scanner scanner = new Scanner(System.in);
+        int choice;
+
+        do {
+            System.out.println("========== Ledger Application ==========");
+            System.out.println("1. List Products");
+            System.out.println("2. Add Product");
+            System.out.println("3. Update Product");
+            System.out.println("4. Delete Product");
+            System.out.println("5. Search Product");
+            System.out.println("0. Exit");
+            System.out.print("Enter your choice: ");
+            choice = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (choice) {
+                case 1:
+                    listProducts(productService);
+                    break;
+                case 2:
+                    addProduct(scanner, productService);
+                    break;
+                case 3:
+                    updateProduct(scanner, productService);
+                    break;
+                case 4:
+                    deleteProduct(scanner, productService);
+                    break;
+                case 5:
+                    searchProduct(scanner, productService);
+                    break;
+                case 0:
+                    System.out.println("Exiting...");
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        } while (choice != 0);
+
+        scanner.close();
+    }
+
+    private static void listProducts(ProductService productService) {
+        System.out.println("========== List of Products ==========");
+        List<Product> products = productService.getAllProducts();
+
+        for (Product product : products) {
+            System.out.println(product);
+        }
+        System.out.println();
+    }
+
+    private static void addProduct(Scanner scanner, ProductService productService) {
+        System.out.print("Enter product name: ");
+        String productName = scanner.nextLine();
+
+        System.out.print("Enter product category ID: ");
+        int productCategoryID = scanner.nextInt();
+        scanner.nextLine();
+
+        System.out.print("Enter product price: ");
+        double productPrice = scanner.nextDouble();
+        scanner.nextLine();
+
+        Product product = new Product(productName, productCategoryID, productPrice);
+        Product newProduct = productService.addProduct(product);
+
+        System.out.println("Product added successfully.\n");
+        System.out.println(newProduct);
+        System.out.println();
+    }
+
+    private static void updateProduct(Scanner scanner, ProductService productService) {
+        System.out.print("Enter the product ID to update: ");
+        int productId = scanner.nextInt();
+        scanner.nextLine();
+
+        Product existingProduct = productService.getProductById(productId);
+        if (existingProduct == null) {
+            System.out.println("Product not found.\n");
+            return;
+        }
+
+        System.out.print("Enter product name: ");
+        String newProductName = scanner.nextLine();
+
+        System.out.print("Enter product category ID: ");
+        int newProductCategoryID = scanner.nextInt();
+        scanner.nextLine();
+
+        System.out.print("Enter product price: ");
+        int newProductPrice = scanner.nextInt();
+        scanner.nextLine();
+
+        Product updatedProduct = new Product(newProductName, newProductCategoryID, newProductPrice);
+        productService.updateProduct(productId, updatedProduct);
+
+        System.out.println("Product updated successfully.\n");
+    }
+
+    private static void deleteProduct(Scanner scanner, ProductService productService) {
+        System.out.print("Enter the product ID to delete: ");
+        int productID = scanner.nextInt();
+        scanner.nextLine();
+
+        Product existingProduct = productService.getProductById(productID);
+        if (existingProduct == null) {
+            System.out.println("Product not found.\n");
+            return;
+        }
+
+        productService.deleteProduct(productID);
+
+        System.out.println("Product deleted successfully.\n");
+    }
+
+    private static void searchProduct(Scanner scanner, ProductService productService) {
+        System.out.print("Enter the product ID to search: ");
+        int productID = scanner.nextInt();
+        scanner.nextLine();
+
+        Product product = productService.getProductById(productID);
+        if (product == null) {
+            System.out.println("Product not found.\n");
+        } else {
+            System.out.println("========== Product Details ==========");
+            System.out.println(product);
+            System.out.println();
+        }
+    }
+}

@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class NorthwindTraders3Application {
+public class NorthwindTradersApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(NorthwindTraders3Application.class, args);
+		SpringApplication.run(NorthwindTradersApplication.class, args);
 	}
 
 }
